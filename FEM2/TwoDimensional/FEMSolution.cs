@@ -59,19 +59,22 @@ public class FEMSolution
         {
             var element = _grid.Elements.First(x => ElementHas(x, point));
 
-            var basisFunctions = _localBasisFunctionsProvider.GetBilinearFunctions(element);
+            var basisFunctionsX = 
+                _localBasisFunctionsProvider.GetBilinearFunctionsDerivatives(element, 'x');
+            var basisFunctionsY =
+                _localBasisFunctionsProvider.GetBilinearFunctionsDerivatives(element, 'y');
 
             var sumX = 0d;
             var sumY = 0d;
 
             sumX += element.NodesIndexes
                 .Select((t, i) => 
-                    _solution[t] * _derivativeCalculator.Calculate(basisFunctions[i], point, 'x'))
+                    _solution[t] * basisFunctionsX[i].Calculate(point))
                 .Sum();
 
             sumY += element.NodesIndexes
                 .Select((t, i) =>
-                    _solution[t] * _derivativeCalculator.Calculate(basisFunctions[i], point, 'y'))
+                    _solution[t] * basisFunctionsY[i].Calculate(point))
                 .Sum();
 
             var b = Math.Sqrt(sumX * sumX + sumY * sumY);
