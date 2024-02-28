@@ -11,7 +11,7 @@ public class DerivativeCalculator
     {
         double result;
 
-        if (variableChar == 'r')
+        if (variableChar == 'x')
         {
             result = localBasisFunction.Calculate(point.X + Delta, point.Y) - localBasisFunction.Calculate(point.X - Delta, point.Y);
         }

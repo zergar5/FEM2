@@ -43,8 +43,6 @@ var localMatrixAssembler = new LocalMatrixAssembler();
 
 var localBasisFunctionsProvider = new LocalBasisFunctionsProvider(grid, new LinearFunctionsProvider());
 
-var derivativeCalculator = new DerivativeCalculator();
-
 var localAssembler = new LocalAssembler(grid, localMatrixAssembler, materialRepository);
 
 var inserter = new Inserter();
@@ -52,7 +50,7 @@ var globalAssembler = new GlobalAssembler<Node2D>(grid, new MatrixPortraitBuilde
 
 var firstBoundaryProvider = new FirstBoundaryProvider(grid);
 
-var firstBoundaries = firstBoundaryProvider.GetConditions(firstBoundaryProvider.GetArrays(11, 6));
+var firstBoundaries = firstBoundaryProvider.GetConditions(firstBoundaryProvider.GetArrays(41, 24));
 
 var lltPreconditioner = new LLTPreconditioner();
 var solver = new MCG(lltPreconditioner, new LLTSparse());
@@ -68,9 +66,9 @@ var solution = solver
     .SetPrecondition(preconditionMatrix)
     .Solve(equation);
 
-var femSolution = new FEMSolution(grid, solution, localBasisFunctionsProvider);
+var femSolution = new FEMSolution(grid, solution, localBasisFunctionsProvider, new DerivativeCalculator());
 
-Span<double> results =
+Span<double> resultsAz =
 [
     femSolution.CalculateAz(new Node2D(-1e-2, 1.3e-3)),
     femSolution.CalculateAz(new Node2D(-3e-3, 2.5e-3)),
@@ -79,7 +77,21 @@ Span<double> results =
     femSolution.CalculateAz(new Node2D(9.5e-3, 2.4e-3)),
 ];
 
-foreach (var result in results)
+Span<double> resultsB =
+[
+    femSolution.CalculateB(new Node2D(-1e-2, 1.3e-3)),
+    femSolution.CalculateB(new Node2D(-3e-3, 2.5e-3)),
+    femSolution.CalculateB(new Node2D(0, 1.6e-3)),
+    femSolution.CalculateB(new Node2D(3e-3, 2.5e-3)),
+    femSolution.CalculateB(new Node2D(9.5e-3, 2.4e-3)),
+];
+
+foreach (var result in resultsAz)
+{
+    Console.WriteLine(result);
+}
+
+foreach (var result in resultsB)
 {
     Console.WriteLine(result);
 }
