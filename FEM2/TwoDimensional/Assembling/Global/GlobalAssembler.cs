@@ -58,7 +58,7 @@ public class GlobalAssembler<TNode>
         return this;
     }
 
-    public GlobalAssembler<TNode> ApplyFirstConditions(FirstConditionValue[] conditions)
+    public GlobalAssembler<TNode> ApplyFirstBoundaries(FirstBoundaryValue[] conditions)
     {
         foreach (var condition in conditions)
         {

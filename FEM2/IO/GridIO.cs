@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using FEM2.Core.Boundary;
 using FEM2.Core.GridComponents;
 
 namespace FEM2.IO
@@ -72,6 +73,20 @@ namespace FEM2.IO
             }
 
             return elements.ToArray();
+        }
+
+        public FirstBoundary[] ReadFirstBoundaries(string fileName)
+        {
+            using var binaryReader = new BinaryReader(File.Open(_path + fileName, FileMode.Open), Encoding.ASCII);
+
+            var boundaries = new List<FirstBoundary>();
+
+            while (binaryReader.PeekChar() > -1)
+            {
+                boundaries.Add(new FirstBoundary(binaryReader.ReadInt32() - 1));
+            }
+
+            return boundaries.ToArray();
         }
     }
 }

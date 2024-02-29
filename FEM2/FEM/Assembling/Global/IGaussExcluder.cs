@@ -5,5 +5,5 @@ namespace FEM2.FEM.Assembling.Global;
 
 public interface IGaussExcluder<TMatrix>
 {
-    public void Exclude(Equation<TMatrix> equation, FirstConditionValue conditionValue);
+    public void Exclude(Equation<TMatrix> equation, FirstBoundaryValue boundaryValue);
 }

@@ -25,6 +25,7 @@ var gridI = new GridIO("../FEM2/Files/");
 var nodes = gridI.ReadNodes("rz.dat");
 var materialsIds = gridI.ReadMaterials("nvkat2d.dat");
 var elements = gridI.ReadElements(nodes, materialsIds, "nvtr.dat");
+var firstBoundaries = gridI.ReadFirstBoundaries("l1.dat");
 
 var gridBuilder = new GridBuilder2D();
 
@@ -33,31 +34,33 @@ var grid = gridBuilder
     .SetElements(elements)
     .Build();
 
+var ironMu = 1000d * 4 * Math.PI * 1e-7;
+var mu = 1d * 4 * Math.PI * 1e-7;
+
 var materialRepository = new MaterialRepository
 (
-    [1000d * 4 * Math.PI * 1e-7, 1d * 4 * Math.PI * 1e-7, 1d * 4 * Math.PI * 1e-7, 1d * 4 * Math.PI * 1e-7],
+    [ironMu, mu, mu, mu],
     [0d, 0d, 1e7, -1e7]
 );
 
-var localMatrixAssembler = new LocalMatrixAssembler();
-
 var localBasisFunctionsProvider = new LocalBasisFunctionsProvider(grid, new LinearFunctionsProvider());
 
-var localAssembler = new LocalAssembler(grid, localMatrixAssembler, materialRepository);
+var localAssembler = new LocalAssembler(grid, new LocalMatrixAssembler(), materialRepository);
 
-var inserter = new Inserter();
-var globalAssembler = new GlobalAssembler<Node2D>(grid, new MatrixPortraitBuilder(), localAssembler, inserter, new GaussExcluder());
+var globalAssembler = 
+    new GlobalAssembler<Node2D>(grid, 
+        new MatrixPortraitBuilder(), localAssembler, new Inserter(), new GaussExcluder());
 
 var firstBoundaryProvider = new FirstBoundaryProvider(grid);
 
-var firstBoundaries = firstBoundaryProvider.GetConditions(firstBoundaryProvider.GetArrays(41, 24));
+var firstBoundariesValues = 
+    firstBoundaryProvider.GetConditions(firstBoundaries);
 
-var lltPreconditioner = new LLTPreconditioner();
-var solver = new MCG(lltPreconditioner, new LLTSparse());
+var solver = new MCG(new LLTPreconditioner(), new LLTSparse());
 
 var equation = globalAssembler
     .AssembleEquation(grid)
-    .ApplyFirstConditions(firstBoundaries)
+    .ApplyFirstBoundaries(firstBoundariesValues)
     .BuildEquation();
 
 var preconditionMatrix = globalAssembler.AllocatePreconditionMatrix();
