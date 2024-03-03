@@ -39,7 +39,7 @@ var mu = 1d * 4 * Math.PI * 1e-7;
 
 var materialRepository = new MaterialRepository
 (
-    [ironMu, mu, mu, mu],
+    [mu, ironMu, mu, mu],
     [0d, 0d, 1e7, -1e7]
 );
 
@@ -89,12 +89,12 @@ Span<double> resultsB =
     femSolution.CalculateB(new Node2D(9.5e-3, 2.4e-3)),
 ];
 
-foreach (var result in resultsAz)
-{
-    Console.WriteLine(result);
-}
+//foreach (var result in resultsAz)
+//{
+//    Console.WriteLine(result);
+//}
 
-foreach (var result in resultsB)
-{
-    Console.WriteLine(result);
-}
+//foreach (var result in resultsB)
+//{
+//    Console.WriteLine(result);
+//}

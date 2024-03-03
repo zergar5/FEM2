@@ -49,8 +49,8 @@ public class FEMSolution
         }
 
         CourseHolder.WriteAreaInfo();
-        CourseHolder.WriteAz(point, 0);
-        return 0;
+        CourseHolder.WriteAz(point, double.NaN);
+        return double.NaN;
     }
 
     public double CalculateB(Node2D point)
@@ -64,29 +64,26 @@ public class FEMSolution
             var basisFunctionsY =
                 _localBasisFunctionsProvider.GetBilinearFunctionsDerivatives(element, 'y');
 
-            var sumX = 0d;
-            var sumY = 0d;
-
-            sumX += element.NodesIndexes
+            var bX = element.NodesIndexes
                 .Select((t, i) => 
-                    _solution[t] * basisFunctionsX[i].Calculate(point))
-                .Sum();
-
-            sumY += element.NodesIndexes
-                .Select((t, i) =>
                     _solution[t] * basisFunctionsY[i].Calculate(point))
                 .Sum();
 
-            var b = Math.Sqrt(sumX * sumX + sumY * sumY);
+            var bY = -element.NodesIndexes
+                .Select((t, i) =>
+                    _solution[t] * basisFunctionsX[i].Calculate(point))
+                .Sum();
 
-            CourseHolder.WriteAz(point, b);
+            var b = Math.Sqrt(bX * bX + bY * bY);
+
+            CourseHolder.WriteB(point, bX, bY, b);
 
             return b;
         }
 
         CourseHolder.WriteAreaInfo();
-        CourseHolder.WriteAz(point, 0);
-        return 0;
+        CourseHolder.WriteB(point, double.NaN, double.NaN, double.NaN);
+        return double.NaN;
     }
 
     private bool ElementHas(Element element, Node2D node)

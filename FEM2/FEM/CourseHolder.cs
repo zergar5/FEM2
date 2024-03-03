@@ -11,12 +11,12 @@ public class CourseHolder
 
     public static void WriteAz(Node2D point, double value)
     {
-        Console.WriteLine($"({point.X:F4}, {point.Y:F4}) Az = {value}");
+        Console.WriteLine($"{value:E14}");
     }
 
-    public static void WriteB(Node2D point, double value)
+    public static void WriteB(Node2D point, double bX, double bY, double b)
     {
-        Console.WriteLine($"({point.X:F4}, {point.Y:F4}) B = {value}");
+        Console.WriteLine($"{bX:E14} {bY:E14} {b:E14}");
     }
 
     public static void WriteAreaInfo()
